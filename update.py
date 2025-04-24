@@ -1,11 +1,12 @@
-import requests
-from bs4 import BeautifulSoup
 import os
 import subprocess
 import time
 
+import requests
+from bs4 import BeautifulSoup
 
-def fetch_and_save(url, file_name, headers={}):
+
+def fetch_and_save(url, file_name):
     # Check if the file exists and is not older than 1 hour then returning the latest content
     # else downloading the file and saving it
     if os.path.exists(file_name) and time.time() - os.path.getmtime(file_name) < 3600:
@@ -24,12 +25,14 @@ def fetch_and_save(url, file_name, headers={}):
     except IOError as e:
         raise Exception(f"Error saving to {file_name}: {e}")
 
+
 def main():
     try:
         novelbin = fetch_and_save(
-            "https://novelbin.me/novel-book/shadow-slave", "novelbin.html")
+            "https://novelbin.me/novel-book/shadow-slave", "novelbin.html"
+        )
 
-        novel_soup = BeautifulSoup(novelbin, 'lxml')
+        novel_soup = BeautifulSoup(novelbin, "lxml")
 
         novel_chapters = novel_soup.find_all(class_="item-value")
         new_chapters = []
@@ -37,10 +40,11 @@ def main():
             chapter_title = chapter.find("a").text.strip()
             new_chapters.append(chapter_title)
 
-        new_chapters = '\n'.join(new_chapters)
+        new_chapters = "\n".join(new_chapters)
         subprocess.run(["notify-send", "New Chapters", new_chapters])
     except Exception as e:
         subprocess.run(["notify-send", "Error", str(e)])
+
 
 if __name__ == "__main__":
     main()
