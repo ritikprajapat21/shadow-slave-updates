@@ -18,7 +18,6 @@ def fetch_and_save(url, file_name):
         response.raise_for_status()
         with open(file_name, "wb") as f:
             f.write(response.content)
-        print("File saved successfully")
         return response.content
     except requests.exceptions.RequestException as e:
         raise Exception(f"Error fetching {url}: {e}")
